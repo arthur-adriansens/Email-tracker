@@ -35,7 +35,7 @@ app.use((req, res, next) => {
         from: process.env.EMAIL_FROM,
         to: process.env.EMAIL_TO,
         subject: "Email Tracking Alert",
-        text: `Info ${JSON.stringify(trackingData, null, 2)} \n More info: \n ${JSON.stringify(req, null, 2)}`,
+        text: JSON.stringify(trackingData, null, 2),
     };
 
     transporter.sendMail(mailOptions);
