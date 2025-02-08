@@ -1,9 +1,9 @@
 {
     "version": 2,
-    "routes": [
+    "rewrites": [
         {
-            "src": "/image",
-            "dest": "/index.js"
+            "source": "/(.*)",
+            "destination": "index.js"
         }
     ],
     "headers": [
