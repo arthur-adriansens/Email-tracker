@@ -1,8 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const nodemailer = require("nodemailer");
-
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 // Create transporter for Gmail
@@ -22,7 +23,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     const trackingData = {
         headers: req.headers,
         userAgent: req.get("User-Agent"),
@@ -38,7 +39,8 @@ app.use((req, res, next) => {
         text: JSON.stringify(trackingData, null, 2),
     };
 
-    transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(info);
 
     next();
 });
@@ -47,4 +49,5 @@ app.use((req, res, next) => {
 app.get("/image", (req, res) => {
     res.sendFile(path.join(__dirname, "1x1.png"));
 });
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
