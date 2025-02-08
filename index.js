@@ -6,10 +6,11 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware to log request details
 app.use((req, res, next) => {
-    console.log("Request received:");
-    console.log("IP:", req.ip);
+    console.log("Request received:", req);
     console.log("Headers:", req.headers);
     console.log("User-Agent:", req.get("User-Agent"));
+    console.log("IP:", req.ip);
+    console.log("-------------------------");
     next();
 });
 
