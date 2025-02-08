@@ -28,7 +28,6 @@ app.use((req, res, next) => {
         userAgent: req.get("User-Agent"),
         ip: req.ip,
         timestamp: new Date().toISOString(),
-        request: req,
     };
 
     // Send email
@@ -36,7 +35,7 @@ app.use((req, res, next) => {
         from: process.env.EMAIL_FROM,
         to: process.env.EMAIL_TO,
         subject: "Email Tracking Alert",
-        text: JSON.stringify(trackingData, null, 2),
+        text: `Info ${JSON.stringify(trackingData, null, 2)} \n More info: \n ${JSON.stringify(req, null, 2)}`,
     };
 
     transporter.sendMail(mailOptions);
