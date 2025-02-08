@@ -1,24 +1,46 @@
 const express = require("express");
 const path = require("path");
+const nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Create transporter for Gmail
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_FROM,
+        pass: process.env.GMAIL_PASS, // Generate this in Gmail settings
+    },
+});
+
 // CORS middleware
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
 
-// Middleware to log request details
 app.use((req, res, next) => {
-    console.log("Request received:", req);
-    console.log("Headers:", req.headers);
-    console.log("User-Agent:", req.get("User-Agent"));
-    console.log("IP:", req.ip);
-    console.log("-------------------------");
+    const trackingData = {
+        headers: req.headers,
+        userAgent: req.get("User-Agent"),
+        ip: req.ip,
+        timestamp: new Date().toISOString(),
+        request: req,
+    };
+
+    // Send email
+    const mailOptions = {
+        from: process.env.EMAIL_FROM,
+        to: process.env.EMAIL_TO,
+        subject: "Email Tracking Alert",
+        text: JSON.stringify(trackingData, null, 2),
+    };
+
+    transporter.sendMail(mailOptions);
+
     next();
 });
 
@@ -26,6 +48,4 @@ app.use((req, res, next) => {
 app.get("/image", (req, res) => {
     res.sendFile(path.join(__dirname, "1x1.png"));
 });
-
-
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
